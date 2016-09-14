@@ -25,12 +25,16 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
+import java.util.concurrent.TimeUnit;
+
+import org.junit.rules.Stopwatch;
+
 
 public class ReadBinaryFile {
 	//
-	// The strategy is to read in the list of points and then do calculations with in in one go. 
-	//  Would the list be much larger then calculations could be done in one go. But would make the code
-	// more difficult to read
+	// The strategy is to read in the list of points and then do calculations with them in one go. 
+	//  Would the list be much larger then calculations could be done in one go while reading in. But would make the code
+	//  more difficult to read
 	//
 	static Vector<Point> Closest_10_Points;
 	static Vector<Point> Furthest_20_Points;
@@ -53,7 +57,7 @@ public class ReadBinaryFile {
 	//
 	static void Calculate_Closest_Furthest_Points(Vector<Point> pointList) {
 	// 
-	// Calculate distance to the given points and use hasmap for sorting.
+	// Calculate distance to the given points and use hashmap for sorting.
 	//
 	short XCoordinatePoint = -200;
 	short YCoordinatePoint =  300;
@@ -74,7 +78,9 @@ public class ReadBinaryFile {
 	//
 	// Calculate Distance and store in HashMap
 	//
-	System.out.println("Calculate Distance \n");
+	System.out.println("=> Calculate Distance \n");
+	//
+	long startTime = System.currentTimeMillis();
 	//
 	for (Point myPoint : pointList)
 	{
@@ -90,6 +96,8 @@ public class ReadBinaryFile {
 	    //
 	    //
 	}
+	//
+    System.out.println("Time for calculating distance (s)"+ TimeUnit.MILLISECONDS.toSeconds((System.currentTimeMillis() - startTime))+"\n");
 	//
 	// Sort Hashmap. Use Comparator
     /*
@@ -114,10 +122,15 @@ public class ReadBinaryFile {
     }
     */
 	//
-	System.out.println("Do sorting \n");
+	System.out.println("=>Do sorting \n");
 	//
-	Map<Integer, String> mapC = sortByValuesAscending(myMapClosest); 
+	startTime = System.currentTimeMillis();
+	Map<Integer, String> mapC = sortByValuesAscending(myMapClosest);
+    System.out.println("Time for sorting Closest (s)"+ TimeUnit.MILLISECONDS.toSeconds((System.currentTimeMillis() - startTime)));
+    //
+    startTime = System.currentTimeMillis();
 	Map<Integer, String> mapF = sortByValuesDescending(myMapFurthest);
+    System.out.println("Time for sorting Furthest (s)"+TimeUnit.MILLISECONDS.toSeconds((System.currentTimeMillis() - startTime)));
 	//
 	// Clear up memory
 	//
@@ -129,7 +142,7 @@ public class ReadBinaryFile {
 	//
 
 	int number1=0;
-	   System.out.println("\n After Sorting Closest:");
+	   System.out.println("\nAfter Sorting Closest:");
 	      Set setC = mapC.entrySet();
 	      Iterator iterator = setC.iterator();
 	      while(iterator.hasNext() && number1 <10) {
@@ -151,7 +164,7 @@ public class ReadBinaryFile {
 		}
 	      //
 	  	int number2=0;
-		   System.out.println("\n After Sorting Furthest:");
+		   System.out.println("\nAfter Sorting Furthest:");
 		      Set setF = mapF.entrySet();
 		      Iterator iterator2 = setF.iterator();
 		      while(iterator2.hasNext() && number2 <20) {
@@ -170,11 +183,12 @@ public class ReadBinaryFile {
 			  	System.out.println("X= "+myPoint.getX()+" Y= "+myPoint.getY());
 				}
 	//
-
 }
-		//
-@SuppressWarnings("unchecked")
+	//
+	//
 private static HashMap sortByValuesAscending(HashMap map) {
+	//
+	// Sort in descending order
 	//
     LinkedList list = new LinkedList(map.entrySet());
     // Defined Custom Comparator here
@@ -206,6 +220,8 @@ private static HashMap sortByValuesAscending(HashMap map) {
 //
 private static HashMap sortByValuesDescending(HashMap map) {
 	//
+	// Sort in ascending order
+	//
     LinkedList list = new LinkedList(map.entrySet());
     // Defined Custom Comparator here
     Collections.sort(list, new Comparator() {
@@ -235,6 +251,8 @@ private static HashMap sortByValuesDescending(HashMap map) {
 }
 //
 public static Vector<Point>  ReadBinaryFile(){
+		//
+		// Read File into memory as Vector of points
 		//
 		InputStream file = null;
 		try {
