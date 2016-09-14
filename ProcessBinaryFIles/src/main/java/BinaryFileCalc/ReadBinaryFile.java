@@ -97,7 +97,7 @@ public class ReadBinaryFile {
 	    //
 	}
 	//
-    System.out.println("Time for calculating distance (s)"+ TimeUnit.MILLISECONDS.toSeconds((System.currentTimeMillis() - startTime))+"\n");
+    System.out.println("Time for calculating distance (s) "+ TimeUnit.MILLISECONDS.toSeconds((System.currentTimeMillis() - startTime))+"\n");
 	//
 	// Sort Hashmap. Use Comparator
     /*
@@ -126,11 +126,11 @@ public class ReadBinaryFile {
 	//
 	startTime = System.currentTimeMillis();
 	Map<Integer, String> mapC = sortByValuesAscending(myMapClosest);
-    System.out.println("Time for sorting Closest (s)"+ TimeUnit.MILLISECONDS.toSeconds((System.currentTimeMillis() - startTime)));
+    System.out.println("Time for sorting Closest (s) "+ TimeUnit.MILLISECONDS.toSeconds((System.currentTimeMillis() - startTime)));
     //
     startTime = System.currentTimeMillis();
 	Map<Integer, String> mapF = sortByValuesDescending(myMapFurthest);
-    System.out.println("Time for sorting Furthest (s)"+TimeUnit.MILLISECONDS.toSeconds((System.currentTimeMillis() - startTime)));
+    System.out.println("Time for sorting Furthest (s) "+TimeUnit.MILLISECONDS.toSeconds((System.currentTimeMillis() - startTime)));
 	//
 	// Clear up memory
 	//
