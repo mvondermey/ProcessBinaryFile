@@ -22,17 +22,20 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.junit.rules.Stopwatch;
 
 
 public class ReadBinaryFile {
 	//
-	// The strategy is to read in the list of points and then do calculations with them in one go. 
+	// The strategy is to read in the list of points and then do calculations with them in one go. Use parallel sort. 
 	//  Would the list be much larger then calculations could be done in one go while reading in. But would make the code
 	//  more difficult to read
 	//
@@ -100,27 +103,7 @@ public class ReadBinaryFile {
     System.out.println("Time for calculating distance (s) "+ TimeUnit.MILLISECONDS.toSeconds((System.currentTimeMillis() - startTime))+"\n");
 	//
 	// Sort Hashmap. Use Comparator
-    /*
-	System.out.println("\n Before sorting closest");
-    Set seto = myMapClosest.entrySet();
-    Iterator iteratoro = seto.iterator();
-    while(iteratoro.hasNext()) {
-         Map.Entry meo = (Map.Entry)iteratoro.next();
-         System.out.print(meo.getKey() + ": ");
-         System.out.println(meo.getValue());
-    }
-	*/
     //
-    /*
-    System.out.println("\n Before sorting furthest");
-    Set seto2 = myMapFurthest.entrySet();
-    Iterator iteratoro2 = seto2.iterator();
-    while(iteratoro2.hasNext()) {
-         Map.Entry meo = (Map.Entry)iteratoro2.next();
-         System.out.print(meo.getKey() + ": ");
-         System.out.println(meo.getValue());
-    }
-    */
 	//
 	System.out.println("=>Do sorting \n");
 	//
@@ -188,30 +171,31 @@ public class ReadBinaryFile {
 	//
 private static HashMap sortByValuesAscending(HashMap map) {
 	//
-	// Sort in descending order
+	// Sort in descending order using parallelsort
 	//
     LinkedList list = new LinkedList(map.entrySet());
-    // Defined Custom Comparator here
-    Collections.sort(list, new Comparator() {
-         @Override
+    //
+    Object sortedList = list.parallelStream().sorted(new Comparator() {
+        @Override
 		public int compare(Object o1, Object o2) {
-        	 double value1 = (double) ((Map.Entry) (o1)).getValue();
-        	 double value2 = (double) ((Map.Entry) (o2)).getValue();
-        	 //
-        	 int myCompare = value1 > value2 ? 1 : (value1 < value2 ? -1 : 0);
-        	 //
-        	 //System.out.println(value1+" "+value2+" "+myCompare);
-        	 //
-        	 //
-            return myCompare;
-         }
-         //
-    });
-
-    // Here I am copying the sorted list in HashMap
+       	 double value1 = (double) ((Map.Entry) (o1)).getValue();
+       	 double value2 = (double) ((Map.Entry) (o2)).getValue();
+       	 //
+       	 int myCompare = value1 > value2 ? 1 : (value1 < value2 ? -1 : 0);
+       	 //
+       	 //System.out.println(value1+" "+value2+" "+myCompare);
+       	 //
+       	 //
+           return myCompare;
+        }
+        }).collect(Collectors.toList());
+    //
+    //
+    // Here copying the sorted list into HashMap
     // using LinkedHashMap to preserve the insertion order
+    //
     HashMap sortedHashMap = new LinkedHashMap();
-    for (Iterator it = ((java.util.List<Point>) list).iterator(); it.hasNext();) {
+    for (Iterator it = ((java.util.List<Point>) sortedList).iterator(); it.hasNext();) {
            Map.Entry entry = (Map.Entry) it.next();
            sortedHashMap.put(entry.getKey(), entry.getValue());
     } 
@@ -220,30 +204,34 @@ private static HashMap sortByValuesAscending(HashMap map) {
 //
 private static HashMap sortByValuesDescending(HashMap map) {
 	//
-	// Sort in ascending order
+	// Sort in ascending order parallelsort
 	//
     LinkedList list = new LinkedList(map.entrySet());
     // Defined Custom Comparator here
-    Collections.sort(list, new Comparator() {
-         @Override
+    //
+    //
+    //
+    Object sortedList = list.parallelStream().sorted(new Comparator() {
+        @Override
 		public int compare(Object o1, Object o2) {
-        	 double value1 = (double) ((Map.Entry) (o1)).getValue();
-        	 double value2 = (double) ((Map.Entry) (o2)).getValue();
-        	 //
-        	 int myCompare = value2 > value1 ? 1 : (value2 < value1 ? -1 : 0);
-        	 //
-        	 //System.out.println(value1+" "+value2+" "+myCompare);
-        	 //
-        	 //
-            return myCompare;
-         }
-         //
-    });
-
+       	 double value1 = (double) ((Map.Entry) (o1)).getValue();
+       	 double value2 = (double) ((Map.Entry) (o2)).getValue();
+       	 //
+       	 int myCompare = value2 > value1 ? 1 : (value2 < value1 ? -1 : 0);
+       	 //
+       	 //System.out.println(value1+" "+value2+" "+myCompare);
+       	 //
+       	 //
+           return myCompare;
+        }
+        //
+   }).collect(Collectors.toList());
+    //
+    //
     // Here I am copying the sorted list in HashMap
     // using LinkedHashMap to preserve the insertion order
     HashMap sortedHashMap = new LinkedHashMap();
-    for (Iterator it = ((java.util.List<Point>) list).iterator(); it.hasNext();) {
+    for (Iterator it = ((java.util.List<Point>) sortedList).iterator(); it.hasNext();) {
            Map.Entry entry = (Map.Entry) it.next();
            sortedHashMap.put(entry.getKey(), entry.getValue());
     } 
@@ -281,7 +269,7 @@ public static Vector<Point>  ReadBinaryFile(){
 	            // print short value
 	            if (count%1000000==0) System.out.print("Read in "+count+" numbers\n");
 	            //
-	            // Create 2-dim Points from X-corrdinate and Y-Coordinate
+	            // Create 2-dim Points from X-Coordinate and Y-Coordinate
 	            //
 	            if ( count %2 == 0 ){
 	            	XCoordinate = k;	            	
