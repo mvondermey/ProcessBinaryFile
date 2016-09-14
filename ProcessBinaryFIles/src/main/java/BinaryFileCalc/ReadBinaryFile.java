@@ -32,6 +32,9 @@ public class ReadBinaryFile {
 	//  Would the list be much larger then calculations could be done in one go. But would make the code
 	// more difficult to read
 	//
+	static Vector<Point> Closest_10_Points;
+	static Vector<Point> Furthest_20_Points;
+	//
 	public static void main(String[] args) {
 	//	
 	Vector<Point> PointList = ReadBinaryFile();
@@ -39,7 +42,16 @@ public class ReadBinaryFile {
 	Calculate_Closest_Furthest_Points(PointList);
 	//
 	}
-private static void Calculate_Closest_Furthest_Points(Vector<Point> pointList) {
+	//
+	public Vector<Point> GetFurthest20Points(){
+		return Furthest_20_Points;
+	}
+	//
+	public Vector<Point> GetCloses10Points(){
+		return Closest_10_Points;
+	}
+	//
+	static void Calculate_Closest_Furthest_Points(Vector<Point> pointList) {
 	// 
 	// Calculate distance to the given points and use hasmap for sorting.
 	//
@@ -51,7 +63,7 @@ private static void Calculate_Closest_Furthest_Points(Vector<Point> pointList) {
 	//
 	Point ReferencePoint = new Point(-200,300);
 	Point ReferencePoint2 = new Point(1000,25);
-	//
+	// 
 	//
 	// Now crate HashMap for sorting
 	//
@@ -61,6 +73,8 @@ private static void Calculate_Closest_Furthest_Points(Vector<Point> pointList) {
 	int count = -1;
 	//
 	// Calculate Distance and store in HashMap
+	//
+	System.out.println("Calculate Distance \n");
 	//
 	for (Point myPoint : pointList)
 	{
@@ -78,7 +92,7 @@ private static void Calculate_Closest_Furthest_Points(Vector<Point> pointList) {
 	}
 	//
 	// Sort Hashmap. Use Comparator
-    //
+    /*
 	System.out.println("\n Before sorting closest");
     Set seto = myMapClosest.entrySet();
     Iterator iteratoro = seto.iterator();
@@ -87,9 +101,9 @@ private static void Calculate_Closest_Furthest_Points(Vector<Point> pointList) {
          System.out.print(meo.getKey() + ": ");
          System.out.println(meo.getValue());
     }
-	//
+	*/
     //
-    //
+    /*
     System.out.println("\n Before sorting furthest");
     Set seto2 = myMapFurthest.entrySet();
     Iterator iteratoro2 = seto2.iterator();
@@ -98,12 +112,20 @@ private static void Calculate_Closest_Furthest_Points(Vector<Point> pointList) {
          System.out.print(meo.getKey() + ": ");
          System.out.println(meo.getValue());
     }
-    //
+    */
+	//
+	System.out.println("Do sorting \n");
+	//
 	Map<Integer, String> mapC = sortByValuesAscending(myMapClosest); 
 	Map<Integer, String> mapF = sortByValuesDescending(myMapFurthest);
 	//
-	Vector<Point> Closest_10_Points = new Vector<Point>();
-	Vector<Point> Furthest_20_Points = new Vector<Point>();
+	// Clear up memory
+	//
+	myMapClosest.clear();
+	myMapFurthest.clear();
+	//
+	Closest_10_Points = new Vector<Point>();
+	Furthest_20_Points = new Vector<Point>();
 	//
 
 	int number1=0;
@@ -141,7 +163,6 @@ private static void Calculate_Closest_Furthest_Points(Vector<Point> pointList) {
 		           Furthest_20_Points.add(pointList.elementAt((int) me.getKey()));
 		           //
 		      }
-
 //
 		      	System.out.println("\n");
 			  	for (Point myPoint : Furthest_20_Points)
@@ -233,14 +254,14 @@ public static Vector<Point>  ReadBinaryFile(){
 		try (DataInputStream fis = new DataInputStream(file)) {
 			//
 		       // available stream to be read
-	         while(fis.available()>0  && count < 50 )
+	         while(fis.available()>0  && count < 100000000 )
 	         {
 	            // read two bytes from data input, return short
 	            short k = fis.readShort();
 	            count++;
 	            //
 	            // print short value
-	            if (count%1000000==0) System.out.print("Processed "+count+" numbers\n");
+	            if (count%1000000==0) System.out.print("Read in "+count+" numbers\n");
 	            //
 	            // Create 2-dim Points from X-corrdinate and Y-Coordinate
 	            //
@@ -249,7 +270,7 @@ public static Vector<Point>  ReadBinaryFile(){
 	            } else {
 	            	YCoordinate = k;
 	            	Point myPoint = new Point(XCoordinate, YCoordinate);
-	            	System.out.print("=========> Point= " + myPoint.getX()+" "+myPoint.getY()+"\n");
+	            	//System.out.print("=========> Point= " + myPoint.getX()+" "+myPoint.getY()+"\n");
 	            	//
 	            	//Add point to vector
 	            	//
@@ -262,6 +283,9 @@ public static Vector<Point>  ReadBinaryFile(){
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		//
+		System.out.println("Finished reading "+count+" entries from file \n");
+		//
 		return PointList;
 	}
 }
